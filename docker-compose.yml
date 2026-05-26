@@ -1,0 +1,62 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: support_db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d support_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://postgres:postgres@db:5432/support_db
+      - REDIS_URL=redis://redis:6379/0
+      - BACKEND_URL=http://backend:8000
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: on-failure
+
+  worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    working_dir: /app
+    command: celery -A backend.celery_worker.celery_app worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://postgres:postgres@db:5432/support_db
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: on-failure
+
+  frontend:
+    build: ./frontend
+    ports:
+      - 5173:5173
+    depends_on:
+      - backend
+
+volumes:
+  db-data:

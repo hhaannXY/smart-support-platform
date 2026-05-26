@@ -1,0 +1,5 @@
+id,text,category
+1,"Payment failed when checking out","payment"
+2,"App crashes after login","bug"
+3,"How to change my password?","account"
+4,"Would love dark mode","feature"
