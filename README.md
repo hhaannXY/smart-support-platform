@@ -1,6 +1,6 @@
 # Smart Support Platform (Demo)
 
-Коротко: демонстрационный проект для автоматизации техподдержки — показывает backend (FastAPI), ML‑инфраструктуру, интеграцию с Telegram, и фронтенд на React. Отлично подходит для показа навыков backend/frontend/ML/DevOps в портфолио.
+Коротко: демонстрационный проект для автоматизации техподдержки - показывает backend (FastAPI), ML‑инфраструктуру, интеграцию с Telegram, и фронтенд на React. Отлично подходит для показа навыков backend/frontend/ML/DevOps в портфолио.
 
 Features
 - FastAPI backend с REST API
